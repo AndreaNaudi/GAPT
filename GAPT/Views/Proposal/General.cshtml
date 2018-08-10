@@ -1,0 +1,224 @@
+﻿@model GAPT.Models.Proposal
+@using GAPT.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Section A - General</h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Id })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Id })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Id })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Id })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Id })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Id })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Id })'" />
+    @if (Model.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Id })'" />
+    }
+    @if (Model.HasFacultyApproval())
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Id })'" />
+    }
+</div>
+
+
+<br><br>
+<table id="proposal-data" class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <th>Id</th><td>@Model.Id</td>
+        </tr>
+        <tr>
+            <th>Created By</th>
+            <td>@Model.GetCreatedBy()</td>
+        </tr>
+        <tr>
+            <th>Created On</th>
+            <td>@Model.CreatedOn</td>
+        </tr>
+    </tbody>
+</table>
+
+
+@if (Model.GeneralId != null)
+{
+    
+    <table id="general-data" class="table table-bordered table-hover">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>@Model.GeneralId</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.Title)</th>
+                <td>@Model.General.Title</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.LevelId)</th>
+                <td>@Model.General.GetLevelName()</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.AreasStudy)</th>
+                <td>@Model.General.AreasStudy</td>
+            </tr>
+            
+            @if (Model.General.GetInitDepts() != null)
+            {
+                string s = "";
+                foreach (Ref_Department dept in Model.General.GetInitDepts())
+                {
+                    s += dept.Name + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>A4: Initiating Department</th>
+                    <td>@s</td>
+                </tr>
+            }
+            @if (Model.General.GetCollabDepts() != null)
+            {
+                string s = "";
+                foreach (Ref_Department dept in Model.General.GetCollabDepts())
+                {
+                    s += dept.Name + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>A5: Collaborating Department / Institution (if any)  <a data-toggle="popover" title="Refers to another entity with which the initiating department is formulating the programme."><span class="glyphicon glyphicon-question-sign"></span></a></th>
+                    <td>@s</td>
+                </tr>
+            }
+            @if (Model.General.GetServDepts() != null)
+            {
+                string s = "";
+                foreach (Ref_Department dept in Model.General.GetServDepts())
+                {
+                    s += dept.Name + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>A6: Servicing Department/s (if any)  <a data-toggle="popover" title="Servicing departments are those which provide the teaching of one or more study-units which fall outside the academic responsibility of the initiating or collaborating departments."><span class="glyphicon glyphicon-question-sign"></span></a></th>
+                    <td>@s</td>
+                </tr>
+            }
+            <tr>
+                <th>@Html.LabelFor(m => m.General.FacultyId)</th>
+                <td>@Model.General.GetFacultyName()</td>
+            </tr>
+            @if (Model.General.GetProposers() != null)
+            {
+                string s = "";
+                foreach (ApplicationUser user in Model.General.GetProposers())
+                {
+                    s += user.Email + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>A8: Name of Proposer/s</th>
+                    <td>@s</td>
+                </tr>
+            }
+            @if (Model.General.GetTypes() != null)
+            {
+                string s = "";
+                foreach (Ref_Type type in Model.General.GetTypes())
+                {
+                    s += type.Name + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>A9: Programme Type</th>
+                    <td>@s</td>
+                </tr>
+            }
+            <tr>
+                <th>@Html.LabelFor(m => m.General.DeliveryId)</th>
+                <td>@Model.General.GetDeliveryName()</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.DurationSemesters)</th>
+                <td>@Model.General.DurationSemesters</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.FirstDateIntake)</th>
+                <td>@Model.General.FirstDateIntake</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.ExpectedStudents)</th>
+                <td>@Model.General.ExpectedStudents</td>
+            </tr>
+            <tr>
+                <th>@Html.LabelFor(m => m.General.MaxStudents)</th>
+                <td>@Model.General.MaxStudents</td>
+            </tr>
+            <tr>
+                <th>Reason for Capping</th>
+                <td>@Model.General.CappingReason</td>
+            </tr>
+            @if (Model.General.GetShared() != null)
+            {
+                string s = "";
+                foreach (ApplicationUser user in Model.General.GetShared())
+                {
+                    s += user.Email + ", ";
+                }
+                s = s.TrimEnd(' '); s = s.TrimEnd(',');
+                <tr>
+                    <th>Shared With</th>
+                    <td>@s</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    if (Model.General.GetComments().Count() > 0)
+    {
+        <h4>Comments</h4>
+        foreach (Comment c in Model.General.GetComments())
+        {
+            <div class="comment">
+                <p><b>@c.Description</b></p>
+                <p>@c.UserId - @c.Date</p>
+                <p>Type: @c.Type</p>
+                @Html.ActionLink("View Replies (" + c.GetReplyCount() + ")", "ViewReplies", "Comment", new { cid = c.Id, pid = Model.Id, section = "General" }, null)<br>
+                @if(c.UserId == User.Identity.GetUserName()){
+                    @Html.ActionLink("Delete", "Remove", "Comment", new { cid = c.Id, rtc = true}, null)
+                }
+                
+                
+            </div>
+            <br>
+        }
+    }
+    else
+    {
+        <p>No comments yet.</p>
+    }
+
+
+    using (Html.BeginForm("Save", "Comment"))
+    {
+        <div class="comment">
+            <label>Add comment</label><br>
+            <textarea required class="form-control" rows="3" name="@Model.General.ThreadId"></textarea><br>
+            <input type="submit" class="btn btn-success" value="Comment">
+
+        </div>
+        <br>
+    }
+}
+else
+{
+    <p>This section has not been filled yet.</p>
+}
+<input type="button" class="btn btn-primary" value="Next" onclick="location.href='@Url.Action("Rationale", "Proposal", new { id = Model.Id })'" /><br><br>

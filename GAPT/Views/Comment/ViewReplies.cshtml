@@ -1,0 +1,112 @@
+﻿@model GAPT.ViewModels.ViewRepliesViewModel
+@using GAPT.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "ViewReplies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Pid })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Pid })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Pid })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Pid })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Pid })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Pid })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Pid })'" />
+    @if (Model.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Pid })'" />
+    }
+    @if (Model.HasApproval)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Pid })'" />
+    }
+</div>
+<h2>@Model.Comment.Description</h2>
+<p>@Model.Comment.UserId</p>
+@if (Model.Comment.UserId == User.Identity.GetUserName())
+{
+    using (Html.BeginForm("Edit", "Comment", new { cid = Model.Comment.Id}))
+    {
+        <a href="#" onclick="showForm()">Edit</a>
+        <div id="editForm" style="display:none">
+            <input required type="text" class="form-control" value="@Model.Comment.Description" name="@Model.Comment.Id"><br>
+            <input type="submit" class="btn btn-success" value="Update">
+            <br><br>
+        </div>
+            
+    }
+    
+}
+
+@if (Model.Replies.Count() == 0)
+{
+    <p>This comment has no replies yet.</p>
+}
+else
+{
+    <h4>Replies</h4>
+    foreach (Comment c in Model.Replies)
+    {
+        <div class="comment">
+            <p><b>@c.Description</b></p>
+            <p>@c.UserId - @c.Date</p>
+            @Html.ActionLink("View Replies (" + c.GetReplyCount() + ")", "ViewReplies", "Comment", new { cid = c.Id, pid = Model.Pid, section = @Model.Section }, null)<br>
+            @if (c.UserId == User.Identity.GetUserName())
+            {
+                @Html.ActionLink("Delete", "Remove", "Comment", new { cid = c.Id, rtc = false }, null)
+            }
+        </div>
+        <br>
+
+    }
+}
+@using (Html.BeginForm("Reply", "Comment"))
+{
+    //UoM users (Lecturers, Deans, HoDs) may only reply to APQRU or PVC comments.
+    if ((User.IsInRole(RoleName.Lecturer) || User.IsInRole(RoleName.Dean) || User.IsInRole(RoleName.HoD)) && (Model.Comment.Type == "PVC" || Model.Comment.Type == "APQRU"))
+    {
+        <div class="comment">
+            <label>Reply to @Model.Comment.UserId</label><br>
+            <textarea required class="form-control" rows="3" name="@Model.Comment.Id"></textarea><br>
+            <input type="submit" class="btn btn-success" value="Reply">
+        </div>
+        <br>
+    }
+    else if (User.IsInRole(RoleName.Apqru) || User.IsInRole(RoleName.Pvc) || User.IsInRole(RoleName.PvcChairman) || User.IsInRole(RoleName.ER) || User.IsInRole(RoleName.Senate) || User.IsInRole(RoleName.Council))
+    {
+        <div class="comment">
+            <label>Reply to @Model.Comment.UserId</label><br>
+            <textarea required class="form-control" rows="3" name="@Model.Comment.Id"></textarea><br>
+            <input type="submit" class="btn btn-success" value="Reply">
+        </div>
+        <br>
+    }
+
+}
+
+@if (Model.Comment.ReplyTo != null)
+{
+    <input type="button" class="btn btn-primary" value="Back" onclick="location.href='@Url.Action("ViewReplies", "Comment", new { cid = Model.Comment.ReplyTo, pid = Model.Pid, section = @Model.Section })'" /><br><br>
+}
+else
+{
+    <input type="button" class="btn btn-primary" value="Back" onclick="location.href='@Url.Action(@Model.Section, "Proposal", new { id = Model.Pid })'" /><br><br>
+}
+
+@section scripts{
+    <script type="text/javascript">
+        function showForm() {
+            document.getElementById('editForm').style.display = 'block';
+        }
+    </script>    
+}
+

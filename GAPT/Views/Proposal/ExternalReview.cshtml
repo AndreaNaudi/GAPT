@@ -1,0 +1,115 @@
+﻿@model GAPT.ViewModels.ExternalReviewDetailsViewModel
+@using GAPT.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var proposal = Model.Proposal;
+    var reviewers = Model.Reviewers;
+}
+<h2>Section C - External Review</h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Proposal.Id })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Proposal.Id })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Proposal.Id })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Proposal.Id })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Proposal.Id })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Proposal.Id })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Proposal.Id })'" />
+    @if (Model.Proposal.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Proposal.Id })'" />
+    }
+    @if (Model.Proposal.HasFacultyApproval())
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Proposal.Id })'" />
+    }
+</div>
+<br><br>
+<a data-toggle="popover" title="An External Reviewer is an academic /expert in the field who is not affiliated to the University of Malta and has not been involved in the planning or the teaching of any programme at the University of Malta."><span class="glyphicon glyphicon-question-sign"></span></a>
+@if (Model.Proposal.ExternalReviewId != null)
+{
+    if (reviewers.Count() > 0)
+    {
+        <table id="reviewers" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Affiliation</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Telephone</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reviewer in reviewers)
+                {
+                    <tr>
+                        <td>@reviewer.Id</td>
+                        <td>@reviewer.Name</td>
+                        <td>@reviewer.Affiliation</td>
+                        <td>@reviewer.Address</td>
+                        <td>@reviewer.Email</td>
+                        <td>@reviewer.Telephone</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>This Proposal does not have any External Reviewers yet.</p>
+    }
+    if (Model.Proposal.ExternalReview.GetComments().Count() > 0)
+    {
+        <h4>Comments</h4>
+        foreach (Comment c in Model.Proposal.ExternalReview.GetComments())
+        {
+            <div class="comment">
+                <p><b>@c.Description</b></p>
+                <p>@c.UserId - @c.Date</p>
+                <p>Type: @c.Type</p>
+                @Html.ActionLink("View Replies (" + c.GetReplyCount() + ")", "ViewReplies", "Comment", new { cid = c.Id, pid = Model.Proposal.Id, section = "ExternalReview" }, null)<br>
+                @if (c.UserId == User.Identity.GetUserName())
+                {
+                    @Html.ActionLink("Delete", "Remove", "Comment", new { cid = c.Id, rtc = true }, null)
+                }
+
+
+            </div>
+                <br>
+        }
+    }
+    else
+    {
+        <p>No comments yet.</p>
+    }
+
+
+    using (Html.BeginForm("Save", "Comment"))
+    {
+        <div class="comment">
+            <label>Add comment</label><br>
+            <textarea required class="form-control" rows="3" name="@Model.Proposal.ExternalReview.ThreadId"></textarea><br>
+            <input type="submit" class="btn btn-success" value="Comment">
+
+        </div>
+            <br>
+    }
+}
+else
+{
+    <p>This section has not been filled yet.</p>
+}
+<input type="button" class="btn btn-primary" value="Previous" onclick="location.href='@Url.Action("TentativePs", "Proposal", new { id = Model.Proposal.Id })'" />
+<input type="button" class="btn btn-primary" value="Next" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Proposal.Id })'" />
+
+

@@ -1,0 +1,12 @@
+﻿@model int?
+@{
+    ViewBag.Title = "No Decision";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br>
+<p>
+    No decision has been taken yet.
+</p>
+
+<input type="button" class="btn btn-danger" value="Cancel" onclick="location.href='@Url.Action("Approval", "Proposal", new { id = Model})'" />
+

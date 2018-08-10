@@ -1,0 +1,228 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 500px;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.highlight-row {
+    background: #eee;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.input-validation-error, .input-validation-error:focus {
+    border: 1px solid red;
+    outline: none;
+    box-shadow: 0 0 6px red;
+}
+
+.navbar-custom {
+    background-color: white;
+    border-bottom: 2px solid #BB1731;
+    color: #BB1731 !important;
+    box-shadow: 0 4px 2px -2px gray;
+}
+
+.tile {
+    border-radius: 5px;
+    margin-top: 20px;
+    height: 200px;
+    width: 300px;
+    left: 100px;
+    float: left;
+    margin-right: 20px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    max-width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    background-size: 200px 200px;
+    pointer-events: none;
+}
+
+.tileProposal {
+    margin-top: 20px;
+    border-radius:5px;
+    height: 200px;
+    width: 800px;
+    left: 100px;
+    margin-right: 20px;
+    /*overflow:hidden;*/
+    background-repeat: no-repeat;
+    max-width: 100%;
+    vertical-align: middle;
+    background-size: 200px 200px;
+}
+
+.tileProposal ul li {
+    color: white;
+}
+
+.tileProposal:hover, .tile:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.caption {
+    pointer-events: auto;
+    background-color: rgba(50,50,50,0.4);
+    overflow: hidden;
+    color: #fff;
+    font-weight: bold;
+    margin: 80px 0px 0px 0px;
+    height: 200px;
+    width: 300px;
+}
+
+.caption p {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.caption:hover {
+    transition: margin .5s;
+    margin: 0px 0px 10px 0px;
+    background-color: rgba(50,50,50,0.4);
+    cursor: pointer;
+}
+
+.tile h1 {
+    margin: 0px 0px 0px 0px;
+    font-size: 55px;
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+}
+.tile:hover h1 {
+    height: 0px;
+    transition: visibility 0s linear 0ms, opacity 0ms;
+    visibility: hidden;
+}
+.tile:hover br {
+    display:none;
+}
+
+#description {
+    overflow: hidden;
+    margin: 25px 0px 0px 0px;
+}
+
+
+.navbarPages {
+    color: white;
+}
+.disabled {
+    color: red;
+}
+
+.comment {
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+li a, li a:visited, li a:hover {
+    color: #BB1731;
+}
+.nav > li > a:focus, .nav > li > a:hover {
+    font-weight: bold;
+    background-color: transparent !important;
+}
+.custom-button {
+    color: #BB1731;
+    background-color: white;
+    padding: 10px 15px 10px 15px;
+    float:right;
+    margin-right:1%;
+}
+.custom-button:hover {
+    text-decoration: none;
+    font-weight: bold;
+    color: #BB1731;
+}
+
+#uom-img {
+    width: 90px;
+}
+
+.btn-toolbar {
+    background-color: #BB1731;
+    color: white;
+    border: 1px solid #BB1731;
+}
+.btn-toolbar:hover, .btn-toolbar:focus {
+    background-color: white;
+    color: #BB1731;
+}
+.dropdown-menu li a:visited {
+    color:black;
+
+}
+
+.customtable {
+    border: 1px solid;
+    table-layout: fixed;
+    width: 200px;
+}
+
+.customtable th, td {
+    border: 1px solid; 
+    width: 100px;
+}
+
+#proposal-data {
+    table-layout: fixed;
+    width: 350px;
+}
+#proposal-data td {
+    width: 70%;
+}
+
+#general-data {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#general-data td {
+    width: 50%;
+}

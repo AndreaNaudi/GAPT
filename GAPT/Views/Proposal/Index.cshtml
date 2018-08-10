@@ -1,0 +1,79 @@
+﻿@model GAPT.ViewModels.ProposalsIndexViewModel
+@using Microsoft.AspNet.Identity
+@using GAPT.Models
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Heading (@Model.Count)</h2>
+@if (User.IsInRole(RoleName.Apqru) || User.IsInRole(RoleName.Lecturer) || User.IsInRole(RoleName.Dean) || User.IsInRole(RoleName.HoD))
+{
+    <input type="button" class="btn btn-success" value="New Proposal" onclick="location.href='@Url.Action("New", "Proposal")'" />
+    <input id="unlockBtn" type="button" class="btn btn-danger" value="Unlock my Proposals" style="display:none" onclick="location.href='@Url.Action("UnlockAll", "Proposal")'" />
+}
+
+@if (Model.Proposals.Count() == 0)
+{
+    <br><br><p>No proposals to show.</p>
+}
+else
+{
+    <body>
+        @foreach (var proposal in Model.Proposals)
+        {
+            <div class="tileProposal" style="background-color: #BB1731">
+                <ul style="list-style:none; padding-right:1%">
+                    <h2 style="color:white;padding-top:10px ">@proposal.General.Title</h2>
+                    <li style="padding-top:10px;" :>Created By: @proposal.GetCreatedBy()</li>
+                    <li style="padding-top:10px" :> @proposal.CreatedOn</li>
+                    @if (proposal.IsInEdit == true)
+                    {
+                        <li style="padding-top:10px" :>Being edited by: @proposal.GetBeingUsedBy()</li>
+                    }
+                    else if (!proposal.Submitted)
+                    {
+                        <li style="padding-top:10px" :>Free to edit</li>
+                    }
+                    else
+                    {
+                        <li style="padding-top:10px" :>Cannot edit</li>
+                    }
+
+                    @if (proposal.IsInEdit == true && proposal.UserEditing == User.Identity.GetUserId())
+                    {
+                        <a href="/Proposal/CloseEdit/@proposal.Id"><button  class="btn custom-button">Unlock</button></a>
+                    }
+
+                    @if (!proposal.Submitted && proposal.IsEditable(User.Identity.GetUserId()))
+                    {
+                        <a href="/General/Edit/@proposal.GeneralId"><button class="btn custom-button">Edit</button></a>
+                    }
+                    @if (proposal.IsViewable(User.Identity.GetUserId(), User.Identity.GetUserName()))
+                    {
+                        <a href="/Proposal/General/@proposal.General.Id"><button class="btn custom-button">View</button></a>
+                    }
+                </ul>
+            </div>
+        }
+    </body>
+
+}
+@section scripts{
+    <script>
+        $(document).load(
+            $(function () {
+
+                $.ajax({
+                        url: '@Url.Action("GetLockedCount", "Proposal")',
+                        success: function (intCount) {
+                            if (intCount > 0) {
+                                document.getElementById('unlockBtn').style.display = "inline-block";
+                            }
+                        }
+                    })
+
+            })
+        );
+    </script>
+}

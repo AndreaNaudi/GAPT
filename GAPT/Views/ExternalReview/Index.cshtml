@@ -1,0 +1,78 @@
+﻿@model GAPT.ViewModels.ExternalReviewIndexViewModel
+@{
+    ViewBag.Title = "External Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var reviewers = Model.Reviewers;
+    //bool exists;
+    //var programmeStudy = Model.ProgrammeStudy;
+    //if (programmeStudy == null || programmeStudy.Id == 0)
+    //{
+    //    ViewBag.Title = "New Proposal";
+    //    exists = false;
+    //}
+    //else
+    //{
+    //    ViewBag.Title = "Edit Proposal";
+    //    exists = true;
+
+    //}
+    //string heading = (exists == false) ? "New Proposal" : "Edit Proposal";
+}
+
+@*<h2>@heading</h2>*@
+<h2>Section C - External Review </h2>
+
+@using (Html.BeginForm("DummySave", "ExternalReview"))
+{
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="submit" name="jump" value="A" class="btn btn-toolbar">Section A</button>
+        <button type="submit" name="jump" value="B" class="btn btn-toolbar">Section B</button>
+        <button type="submit" name="jump" value="C" class="btn btn-toolbar">Section C</button>
+        <button type="submit" name="jump" value="D" class="btn btn-toolbar">Section D</button>
+    </div>
+    <br><br>
+    
+    <p><b>Please suggest the name and contact details of three possible external reviewers, one of whom may be asked to evaluate this programme. The Programme Validation Committee may appoint an External Reviewer who is not included in the suggested list. <a data-toggle="popover" title="An External Reviewer is an academic /expert in the field who is not affiliated to the University of Malta and has not been involved in the planning or the teaching of any programme at the University of Malta."><span class="glyphicon glyphicon-question-sign"></span></a></b></p>
+    <br>
+    if (reviewers.Count() == 0)
+    {
+       
+    <p>This Proposal does not have any External Reviewers yet.</p>
+   }
+   else
+   {
+    <table id="reviewers" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Affiliation and Position</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Telephone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reviewer in reviewers)
+            {
+                <tr>
+                    <td>@reviewer.Id</td>
+                    <td>@reviewer.Name</td>
+                    <td>@reviewer.Affiliation</td>
+                    <td>@reviewer.Address</td>
+                    <td>@reviewer.Email</td>
+                    <td>@reviewer.Telephone</td>
+                    <td>@Html.ActionLink("Edit", "Edit", "Reviewer", new { id = reviewer.Id}, null) - @Html.ActionLink("Remove", "Delete", "Reviewer", new { id = reviewer.Id}, null)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
+    @Html.HiddenFor(m => m.Proposal.Id)
+    <input type="button" class="btn btn-success" value="New Reviewer" onclick="location.href='@Url.Action("New", "Reviewer", new { id = Model.Proposal.Id})'" /><br><br>
+    <button type="submit" name="jump" value="-1" class="btn btn-primary">Previous</button>
+    <button type="submit" name="jump" value="1" class="btn btn-primary">Next</button>
+    <button type="submit" name="jump" value="2" class="btn btn-warning">Exit</button>
+}
+

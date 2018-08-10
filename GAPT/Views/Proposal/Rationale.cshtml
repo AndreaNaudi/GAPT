@@ -1,0 +1,91 @@
+﻿@model GAPT.Models.Proposal
+@using GAPT.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Section B - Rationale for Programme </h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Id })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Id })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Id })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Id })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Id })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Id })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Id })'" />
+    @if (Model.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Id })'" />
+    }
+    @if (Model.HasFacultyApproval())
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Id })'" />
+    }
+</div>
+<br>
+<h3>Rationale</h3>
+@if (Model.ProgrammeRationaleId != null)
+{
+
+    if (@Model.ProgrammeRationale.Rationale != null)
+    {
+
+        <p>@Html.LabelFor(m => m.ProgrammeRationale.Rationale.Justification)<br>@Model.ProgrammeRationale.Rationale.Justification</p>
+        <p>@Html.LabelFor(m => m.ProgrammeRationale.Rationale.Fit)<br>@Model.ProgrammeRationale.Rationale.Fit</p>
+        <p>@Html.LabelFor(m => m.ProgrammeRationale.Rationale.Differences)<br>@Model.ProgrammeRationale.Rationale.Differences</p>
+        if (Model.ProgrammeRationale.Rationale.GetComments().Count() > 0)
+        {
+            <h4>Comments</h4>
+            foreach (Comment c in Model.ProgrammeRationale.Rationale.GetComments())
+            {
+                <div class="comment">
+                    <p><b>@c.Description</b></p>
+                    <p>@c.UserId - @c.Date</p>
+                    <p>Type: @c.Type</p>
+                    @Html.ActionLink("View Replies (" + c.GetReplyCount() + ")", "ViewReplies", "Comment", new { cid = c.Id, pid = Model.Id, section = "Rationale" }, null)<br>
+                    @if (c.UserId == User.Identity.GetUserName())
+                    {
+                        @Html.ActionLink("Delete", "Remove", "Comment", new { cid = c.Id, rtc = true }, null)
+                    }
+
+
+                </div>
+                <br>
+            }
+        }
+        else
+        {
+            <p>No comments yet.</p>
+        }
+
+
+        using (Html.BeginForm("Save", "Comment"))
+        {
+            <div class="comment">
+                <label>Add comment</label><br>
+                <textarea required class="form-control" rows="3" name="@Model.ProgrammeRationale.Rationale.ThreadId"></textarea><br>
+                <input type="submit" class="btn btn-success" value="Comment">
+
+            </div>
+            <br>
+        }
+    }
+    else
+    {
+        <p>This section has not been filled yet.</p>
+    }
+}
+else
+{
+    <p>This section has not been filled yet.</p>
+}
+<input type="button" class="btn btn-primary" value="Previous" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Id })'" />
+<input type="button" class="btn btn-primary" value="Next" onclick="location.href='@Url.Action("Demand", "Proposal", new { id = Model.Id })'" />

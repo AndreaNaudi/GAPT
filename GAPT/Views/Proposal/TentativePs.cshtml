@@ -1,0 +1,168 @@
+﻿@model GAPT.ViewModels.TentativePsDetailsViewModel
+@using GAPT.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var proposal = Model.Proposal;
+    var dict = Model.Dictionary;
+}
+<h2>Section B - Rationale for Programme</h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Proposal.Id })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Proposal.Id })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Proposal.Id })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Proposal.Id })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Proposal.Id })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Proposal.Id })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Proposal.Id })'" />
+    @if (Model.Proposal.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Proposal.Id })'" />
+    }
+    @if (Model.Proposal.HasFacultyApproval())
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Proposal.Id })'" />
+    }
+</div>
+<br>
+<h3>Tentative Programme of Study</h3>
+@if (Model.Proposal.ProgrammeRationaleId != null)
+{
+
+    if (proposal.ProgrammeRationale.TentativePsId != null)
+    {
+
+        if (dict.Keys.Count() > 0)
+        {
+            foreach (Year year in dict.Keys)
+            {
+                var units = dict[year];
+                    <h4 class="year_header">Year @year.YearNo</h4>
+                    
+                        <p>Total ECTs for Year @year.YearNo: @year.TotalEcts</p>    
+                        if (units.Count() > 0)
+                        {
+                        <table class="units-table table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Code <a data-toggle="popover" title="For existing units only"><span class="glyphicon glyphicon-question-sign"></span></a></th>
+                                    <th>Title</th>
+                                    <th>Period <a data-toggle="popover" title="Sem 1 or Sem 2 or YR or SP (Summer period), as applicable"><span class="glyphicon glyphicon-question-sign"></span></a></th>
+                                    <th>Credit Value</th>
+                                    <th>
+                                        C/O/E <a data-toggle="popover" title="Denotes Compulsory, Optional or Elective study-units. All study-units shall be designated as compensatable unless stated otherwise, in which case justification must be provided.
+(N.B. Compensatable passes are not applicable for Postgraduate courses)."><span class="glyphicon glyphicon-question-sign"></span></a>
+                                    </th>
+                                    <th>Lecturer</th>
+                                    @if (Model.Proposal.GetGeneral().LevelId == 1)
+                                    {
+                                        <th>Compensating</th>
+                                        <th>NC Reason</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Year_Unit yu in units)
+                                {
+                                    <tr>
+                                        <td>@yu.GetUnit().Code</td>
+                                        <td>@yu.GetUnit().Title</td>
+                                        <td>@yu.GetPeriodName()</td>
+                                        <td>@yu.Ects</td>
+                                        <td>@yu.GetCoeName()</td>
+                                        <td>@yu.GetLecturerEmail()</td>
+                                        @if (Model.Proposal.GetGeneral().LevelId == 1)
+                                {
+                                            <td>@yu.GetCompensatingName()</td>
+                                            <td>@yu.CompensatingReason</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                        <p>No units yet.</p>
+                        }
+                
+            }
+        }
+        else
+        {
+            <p>This Proposal does not have any scholastic years yet.</p>
+        }
+
+        if (Model.Proposal.ProgrammeRationale.TentativeP.GetComments().Count() > 0)
+        {
+            <h4>Comments</h4>
+            foreach (Comment c in Model.Proposal.ProgrammeRationale.TentativeP.GetComments())
+            {
+                <div class="comment">
+                    <p><b>@c.Description</b></p>
+                    <p>@c.UserId - @c.Date</p>
+                    <p>Type: @c.Type</p>
+                    @Html.ActionLink("View Replies (" + c.GetReplyCount() + ")", "ViewReplies", "Comment", new { cid = c.Id, pid = Model.Proposal.Id, section = "TentativePs" }, null)<br>
+                    @if (c.UserId == User.Identity.GetUserName())
+                    {
+                        @Html.ActionLink("Delete", "Remove", "Comment", new { cid = c.Id, rtc = true }, null)
+                    }
+
+
+                </div>
+                <br>
+            }
+        }
+        else
+        {
+            <p>No comments yet.</p>
+        }
+
+
+        using (Html.BeginForm("Save", "Comment"))
+        {
+            <div class="comment">
+                <label>Add comment</label><br>
+                <textarea required class="form-control" rows="3" name="@Model.Proposal.ProgrammeRationale.TentativeP.ThreadId"></textarea><br>
+                <input type="submit" class="btn btn-success" value="Comment">
+
+            </div>
+            <br>
+        }
+    }
+    else
+    {
+        <p>This section has not been filled yet.</p>
+    }
+}
+else
+{
+    <p>This section has not been filled yet.</p>
+}
+<input type="button" class="btn btn-primary" value="Previous" onclick="location.href='@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Proposal.Id })'" />
+<input type="button" class="btn btn-primary" value="Next" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Proposal.Id })'" />
+@section scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.1/sl-1.2.5/datatables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.units-table').DataTable(
+                {
+                }
+            );
+        });
+    </script>    
+}
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.1/sl-1.2.5/datatables.min.css" />
+
+}

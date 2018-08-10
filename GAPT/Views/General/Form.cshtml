@@ -1,0 +1,312 @@
+﻿@model GAPT.ViewModels.GeneralFormViewModel
+@using GAPT.Models
+@{
+    ViewBag.Title = "General";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var general = Model.General;
+    bool exists;
+    if (general == null || general.Id == 0)
+    {
+        
+        exists = false;
+    }
+    else
+    {
+        exists = true;
+
+    }
+    string heading = (exists == false) ? "New Proposal" : "Edit Proposal";
+}
+<h2>Section A - General</h2>
+@using (Html.BeginForm("Save", "General"))
+{
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="submit" name="jump" value="A" class="btn btn-toolbar">Section A</button>
+        <button type="submit" name="jump" value="B" class="btn btn-toolbar">Section B</button>
+        <button type="submit" name="jump" value="C" class="btn btn-toolbar">Section C</button>
+        <button type="submit" name="jump" value="D" class="btn btn-toolbar">Section D</button>
+    </div>
+    <br><br>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.Title)
+        @Html.TextBoxFor(m => m.General.Title, new { @class = "form-control"})
+        @Html.ValidationMessageFor(m => m.General.Title)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.LevelId)<br>
+        @Html.RadioButtonFor(m => m.General.LevelId, 1, new { id="ugRB", onclick= "enableOptions('0','1','2'), disableOptions(true, '3','4','5','6','7','8','9','10','11')" }) UG &nbsp;&nbsp;
+        @Html.RadioButtonFor(m => m.General.LevelId, 2, new { id = "pgRB", onclick = "enableOptions('3','4','5','6','7','8','9','10','11'), disableOptions(true, '0','1','2')" }) PG
+        @Html.ValidationMessageFor(m => m.General.LevelId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.AreasStudy)
+        @Html.TextBoxFor(m => m.General.AreasStudy, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.General.AreasStudy)
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label>A4: Initiating Department</label>
+        <br>
+        <select id="initSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedInitDepts" data-actions-box="true" data-selected-text-format="count > 0">
+                @foreach (@SelectListItem item in Model.InitDepts)
+                {
+                    var sel = false;
+                    if (Model.SelectedInitDepts != null)
+                    {
+                        foreach (string s in Model.SelectedInitDepts)
+                        {
+                            if (item.Text == s)
+                            {
+                                sel = true;
+                            }
+                        }
+                    }
+                    <option selected=@sel value=@item.Value>@item.Text</option>
+                }
+            
+
+        </select>
+    </div>
+    <script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+    </script>
+    <div class="form-group" style="width:500px">
+        <label >A5: Collaborating Department / Institution (if any)  <a data-toggle="popover" title="Refers to another entity with which the initiating department is formulating the programme."><span class="glyphicon glyphicon-question-sign"></span></a></label>
+
+        <br>
+       
+        <select id="collabSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedCollabDepts" data-actions-box="true" data-selected-text-format="count > 0">
+            @foreach (@SelectListItem item in Model.CollabDepts)
+                {
+                    var sel = false;
+                    if (Model.SelectedCollabDepts != null)
+                    {
+                        foreach (string s in Model.SelectedCollabDepts)
+                        {
+                            if (item.Text == s)
+                            {
+                                sel = true;
+                            }
+                        }
+                    }
+                    <option selected=@sel value=@item.Value>@item.Text</option>
+            }
+
+        </select>
+    </div>
+    <div class="form-group" style="width:500px">
+        <label>A6: Servicing Department/s (if any)  <a data-toggle="popover" title="Servicing departments are those which provide the teaching of one or more study-units which fall outside the academic responsibility of the initiating or collaborating departments."><span class="glyphicon glyphicon-question-sign"></span></a></label>
+            <br>
+        <select id="servSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedServDepts" data-actions-box="true" data-selected-text-format="count > 0">
+            @foreach (@SelectListItem item in Model.ServDepts)
+                {
+                    var sel = false;
+                    if (Model.SelectedServDepts != null)
+                    {
+                        foreach (string s in Model.SelectedServDepts)
+                        {
+                            if (item.Text == s)
+                            {
+                                sel = true;
+                            }
+                        }
+                    }
+                    <option selected=@sel value=@item.Value>@item.Text</option>
+            }
+
+
+        </select>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.FacultyId)
+        @Html.DropDownListFor(m => m.General.FacultyId, new SelectList(Model.Faculties, "Id", "Name"), "Select Faculty", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.General.FacultyId)
+    </div>
+    <div class="form-group" style="width:500px">
+        <label>A8: Name of Proposer/s</label>
+        <br>
+        <select id="propSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedProposers" data-actions-box="true" data-selected-text-format="count > 0">
+            @foreach (@SelectListItem item in Model.Proposers)
+                {
+                    var sel = false;
+                    if (Model.SelectedProposers != null)
+                    {
+                        foreach (string s in Model.SelectedProposers)
+                        {
+                            if (item.Text == s)
+                            {
+                                sel = true;
+                            }
+                        }
+                    }
+                    <option selected=@sel value=@item.Value>@item.Text</option>
+            }
+
+
+        </select>
+    </div>
+
+    <div class="form-group" style="width:500px">
+        <label>A9: Programme Type</label>
+        <br>
+        <select id="typeSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedTypes" data-actions-box="true" data-selected-text-format="count > 0">
+            <optgroup label="UG Taught">
+                <option selected="@(Model.SelectedTypes.Contains("1")?true:false)" id="tp0" value="1">FT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("2")?true:false)" id="tp1" value="2">PT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("3")?true:false)" id="tp2" value="3">PT After Hours</option>
+            </optgroup>
+            <optgroup label="PG Taught & Res (Mainly Taught)">
+                <option selected="@(Model.SelectedTypes.Contains("4")?true:false)" value="4" id="tp3">FT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("5")?true:false)" value="5" id="tp4">PT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("6")?true:false)" value="6" id="tp5">PT After Hours</option>
+            </optgroup>
+            <optgroup label="PG Taught & Res (Mainly Research)">
+                <option selected="@(Model.SelectedTypes.Contains("7")?true:false)" value="7" id="tp6">FT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("8")?true:false)" value="8" id="tp7">PT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("9")?true:false)" value="9" id="tp8">PT After Hours</option>
+            </optgroup>
+            <optgroup label="PG Research Only (min. 80 ECTS Res)">
+                <option selected="@(Model.SelectedTypes.Contains("10")?true:false)" value="10" id="tp9">FT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("11")?true:false)" value="11" id="tp10">PT Day</option>
+                <option selected="@(Model.SelectedTypes.Contains("12")?true:false)" value="12" id="tp11">PT After Hours</option>
+            </optgroup>
+
+        </select>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.DeliveryId)
+        @Html.DropDownListFor(m => m.General.DeliveryId, new SelectList(Model.Deliveries, "Id", "Name"), "Select Mode of Delivery", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.General.DeliveryId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.DurationSemesters)
+        <input id="Duration" type="number" min="1" max="" class="form-control" name="General.DurationSemesters" value=@(exists?Model.General.DurationSemesters:null)>
+        @Html.ValidationMessageFor(m => m.General.DurationSemesters)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.FirstDateIntake)
+        <div class='input-group date' id='FirstDateIntake' style="width:500px">
+            @Html.TextBoxFor(m => m.General.FirstDateIntake, new { @class = "form-control" })
+            <span class="input-group-addon" style="width:0">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(m => m.General.FirstDateIntake)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.ExpectedStudents)
+        <input id="ExpectedStudents" type="number" min="1" max="" class="form-control" name="General.ExpectedStudents" value=@(exists?Model.General.ExpectedStudents : null)>
+        @Html.ValidationMessageFor(m => m.General.ExpectedStudents)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.MaxStudents)
+        <input id="MaxStudents" type="number" min="1" max="" class="form-control" name="General.MaxStudents" value=@(exists?Model.General.MaxStudents : null)>
+        @Html.ValidationMessageFor(m => m.General.MaxStudents)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.General.CappingReason)
+        @Html.TextAreaFor(m => m.General.CappingReason, new { @class = "form-control", rows = 3})
+        @Html.ValidationMessageFor(m => m.General.CappingReason)
+    </div>
+    if (exists && (Model.SelectedProposers.Count() > 0 || Model.SelectedShared.Count() > 0))
+    {
+        <div class="form-group" style="width:500px">
+            <label>Share (optional)</label>
+            <br>
+            <select id="propSelect" data-live-search="true" class="selectpicker form-control" multiple name="SelectedShared" data-actions-box="true" data-selected-text-format="count > 0">
+                @foreach (@SelectListItem item in Model.Shared)
+                {
+                    var sel = false;
+                    if (Model.SelectedShared != null)
+                    {
+                        foreach (string s in Model.SelectedShared)
+                        {
+                            if (item.Text == s)
+                            {
+                                sel = true;
+                            }
+                        }
+                    }
+                    <option selected=@sel value=@item.Value>@item.Text</option>
+                }
+
+
+            </select>
+        </div>
+    }
+
+    @Html.AntiForgeryToken()
+    <button type="submit" name="jump" value="0" class="btn btn-primary">Save</button>
+    <button type="submit" name="jump" value="1" class="btn btn-primary">Next</button>
+    <button type="submit" name="jump" value="2" class="btn btn-warning">Save & Exit</button>
+
+    @Html.HiddenFor(m => m.General.Id)
+
+
+}
+
+@section Styles{
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css" />
+
+}
+
+@section Scripts{
+
+    @*multiselect*@
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(function () {
+            $('#FirstDateIntake').datetimepicker({
+                viewMode: 'years',
+                format: 'MMMM YYYY',
+            }).on('dp.show', function (e) {
+                $(this).data('DateTimePicker').viewMode('years');
+            })
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ugRb = document.getElementById("ugRB");
+            var pgRb = document.getElementById("pgRB");
+            if (ugRb.checked) {
+                disableOptions(false, '3', '4', '5', '6', '7', '8', '9', '10', '11');
+                enableOptions('0', '1', '2');
+            }
+            if (pgRb.checked) {
+                disableOptions(false, '0', '1', '2');
+                enableOptions('3', '4', '5', '6', '7', '8', '9', '10', '11');
+            }
+        });
+        function disableOptions() {
+            for (var i = 1; i < arguments.length; i++) {
+                document.getElementById('tp' + arguments[i]).disabled = true;
+                document.getElementById('tp' + arguments[i]).style.display = 'none';
+            }
+
+            if (arguments[0] == true) {
+                //to not deselect all on document.ready
+                //deselect all
+                $('#typeSelect').selectpicker('val', '');
+            }
+            
+            $('#typeSelect').selectpicker('render');
+            $('#typeSelect').selectpicker('refresh');
+            
+        }
+        function enableOptions() {
+            for (var i = 0; i < arguments.length; i++) {
+                document.getElementById('tp' + arguments[i]).disabled = false;
+                document.getElementById('tp' + arguments[i]).style.display = 'block';
+            }
+            $('#typeSelect').selectpicker('render');
+            $('#typeSelect').selectpicker('refresh');
+        }
+    </script>
+
+}

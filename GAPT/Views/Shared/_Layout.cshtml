@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("Styles", false)
+    @using GAPT.Models;
+    @*date component*@
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    @*<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>*@
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+</head>
+<body style="background-color: #FFFDFD">
+    <div class="navbar navbar-custom navbar-fixed-top">
+        <div id="navbar-custom" class="container">
+
+
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="http://www.um.edu.mt"><img id="uom-img" src="~/Content/images/uom_logo.png"/></a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="~/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    }
+                    
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content" style="">
+        @RenderBody()
+        <hr />
+        <footer>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/fontawesome")
+    @Styles.Render("~/Content/css")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+@if (User.IsInRole(RoleName.Apqru) || User.IsInRole(RoleName.Lecturer) || User.IsInRole(RoleName.HoD) || User.IsInRole(RoleName.Dean))
+{
+    <script type="text/javascript">
+        var idleTime = 0;
+        $(document).ready(function () {
+        //Increment the idle time counter every minute.
+        var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+
+        //Zero the idle timer on mouse movement.
+        $(this).mousemove(function (e) {
+            idleTime = 0;
+        });
+        $(this).keypress(function (e) {
+            idleTime = 0;
+        });
+        });
+
+        function timerIncrement() {
+        idleTime = idleTime + 1;
+        if (idleTime > 29) { // 30 minutes
+	        window.location.href = '@Url.Action("UnlockAll", "Proposal")';
+            
+        }
+        }
+    </script>
+}

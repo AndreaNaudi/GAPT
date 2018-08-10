@@ -1,0 +1,112 @@
+﻿@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Home Page";
+    
+}
+<body>
+    <div>
+        <ul style="list-style-type: none;">
+            <li>
+                <a href="/Proposal/AllProposals">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="allProposalsCount"></h1>
+                        <div class="caption">
+                            <p>All Proposals</p>
+                            <p id="description">All proposals you have permission to view.</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="/Proposal/BeingEdited">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="beingEditedCount"></h1>
+                        <div class="caption">
+                            <p>Being Edited</p>
+                            <p id="description">All proposals which are being edited. You cannot edit until the user editing is done.</p>
+                        </div>
+                    </div>
+                </a>
+
+            </li>
+            <li>
+                <a href="/Proposal/AllSubmitted">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="allSubmittedCount"></h1>
+                        <div class="caption">
+                            <p>Awaiting Faculty Decision</p>
+                            <p id="description">All proposals submitted for faculty approval.</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="/Proposal/RequireModification">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="reqModCount"></h1>
+                        <div class="caption">
+                            <p>Require Modification</p>
+                            <p id="description">All proposals requiring modification.</p>
+                        </div>
+                    </div>
+                </a>            
+            </li>
+            <li>
+                <a href="/Proposal/PvcStage">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="pvcStageCount"></h1>
+                        <div class="caption">
+                            <p>PVC Stage</p>
+                            <p id="description">All proposals awaiting PVC, Senate and Council decisions.</p>
+                        </div>
+                    </div>
+                </a>
+                
+            </li>
+            <li>
+                <a href="/Proposal/InPrincipleApproval">
+                    <div class="tile" style="color:white; background-color: #BB1731">
+                        <br>
+                        <h1 id="inPrincipleCount"></h1>
+                        <div class="caption">
+                            <p>In-Principle Approval</p>
+                            <p id="description">All proposals with In-Principle Approval. These can be moved to Stage 2.</p>
+                        </div>
+                    </div>
+                </a>
+                
+            </li>
+            
+        </ul>
+
+
+
+
+</body>
+
+@section scripts{
+    <script>
+        $(document).load(
+            $(function () {
+
+                $.ajax({
+                        url: '@Url.Action("GetCounts", "Proposal")',
+                        success: function (intCount) {
+                            document.getElementById('allProposalsCount').innerHTML = intCount[0];
+                            document.getElementById('allSubmittedCount').innerHTML = intCount[1];
+                            document.getElementById('reqModCount').innerHTML = intCount[2];
+                            document.getElementById('pvcStageCount').innerHTML = intCount[3];
+                            document.getElementById('inPrincipleCount').innerHTML = intCount[4];
+                            document.getElementById('beingEditedCount').innerHTML = intCount[5];
+                        }
+                    })
+
+            })
+        );
+    </script>
+}

@@ -1,0 +1,58 @@
+﻿@model GAPT.ViewModels.ProgrammeStudyFormViewModel
+@{
+    ViewBag.Title = "Programmes of Study";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool exists;
+    var programmeStudy = Model.ProgrammeStudy;
+    if (programmeStudy == null || programmeStudy.Id == 0)
+    {
+        exists = false;
+    }
+    else
+    {
+        exists = true;
+
+    }
+    string heading = (exists == false) ? "Programmes of Study" : "Programmes of Study";
+}
+
+<h2>Section B - Rationale For Programme</h2>
+<h2>B3: Programme of Study</h2>
+@using (Html.BeginForm("Save", "ProgrammeStudy"))
+{
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="submit" name="jump" value="A" class="btn btn-toolbar">Section A</button>
+        <button type="submit" name="jump" value="B" class="btn btn-toolbar">Section B</button>
+        <button type="submit" name="jump" value="C" class="btn btn-toolbar">Section C</button>
+        <button type="submit" name="jump" value="D" class="btn btn-toolbar">Section D</button>
+    </div>
+    <br><br>
+    <p><strong>Give a detailed summary of the proposed programme of study and the intended learning outcomes. This section should include details of how the programme provides opportunities for students to demonstrate:</strong></p>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProgrammeStudy.KnowledgeUnderstanding)
+        @Html.TextAreaFor(m => m.ProgrammeStudy.KnowledgeUnderstanding, new { @class = "form-control", rows = 10 })
+        @Html.ValidationMessageFor(m => m.ProgrammeStudy.KnowledgeUnderstanding)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProgrammeStudy.IntellectualDevelopment)
+        @Html.TextAreaFor(m => m.ProgrammeStudy.IntellectualDevelopment, new { @class = "form-control", rows = 10 })
+        @Html.ValidationMessageFor(m => m.ProgrammeStudy.IntellectualDevelopment)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProgrammeStudy.KeyTransferableSkills)
+        @Html.TextAreaFor(m => m.ProgrammeStudy.KeyTransferableSkills, new { @class = "form-control", rows = 10 })
+        @Html.ValidationMessageFor(m => m.ProgrammeStudy.KeyTransferableSkills)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProgrammeStudy.OtherSkills)
+        @Html.TextAreaFor(m => m.ProgrammeStudy.OtherSkills, new { @class = "form-control", rows = 10 })
+        @Html.ValidationMessageFor(m => m.ProgrammeStudy.OtherSkills)
+    </div>
+    @Html.HiddenFor(m => m.Proposal.Id)
+    @Html.AntiForgeryToken()
+    <button type="submit" name="jump" value="-1" class="btn btn-primary">Previous</button>
+    <button type="submit" name="jump" value="0" class="btn btn-primary">Save</button>
+    <button type="submit" name="jump" value="1" class="btn btn-primary">Next</button>
+    <button type="submit" name="jump" value="2" class="btn btn-warning">Save & Exit</button>
+    @Html.HiddenFor(m => m.ProgrammeStudy.Id)
+}

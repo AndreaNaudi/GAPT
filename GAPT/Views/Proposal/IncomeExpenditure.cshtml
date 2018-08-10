@@ -1,0 +1,80 @@
+﻿@model GAPT.ViewModels.IncomeExpenditureDetailsViewModel
+@using GAPT.Models
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var proposal = Model.Proposal;
+    var statements = Model.Statements;
+}
+<h2>Section D - Proposed Income and Expenditure Statement</h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <input type="button" class="btn btn-toolbar" value="Section A" onclick="location.href='@Url.Action("General", "Proposal", new { id = Model.Proposal.Id })'" />
+    <div class="btn-group">
+        <button type="button" class="btn btn-toolbar dropdown-toggle" data-toggle="dropdown">
+            Section B <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="@Url.Action("Rationale", "Proposal", new { id = Model.Proposal.Id })">Rationale</a></li>
+            <li><a href="@Url.Action("Demand", "Proposal", new { id = Model.Proposal.Id })">Demand</a></li>
+            <li><a href="@Url.Action("ProgrammeStudy", "Proposal", new { id = Model.Proposal.Id })">Programme of Study</a></li>
+            <li><a href="@Url.Action("TentativePs", "Proposal", new { id = Model.Proposal.Id })">Tentative Programme of Study</a></li>
+        </ul>
+    </div>
+    <input type="button" class="btn btn-toolbar" value="Section C" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Proposal.Id })'" />
+    <input type="button" class="btn btn-toolbar" value="Section D" onclick="location.href='@Url.Action("IncomeExpenditure", "Proposal", new { id = Model.Proposal.Id })'" />
+    @if (Model.Proposal.Submitted)
+    {
+        <input type="button" class="btn btn-toolbar" value="Section E" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Proposal.Id })'" />
+    }
+    @if (Model.Proposal.HasFacultyApproval())
+    {
+        <input type="button" class="btn btn-toolbar" value="Section F" onclick="location.href='@Url.Action("Jump", "InPrinciple", new { id = Model.Proposal.Id })'" />
+    }
+</div>
+<br><br>
+@if (Model.Proposal.IncomeExpenditureId != null)
+{
+    if (statements.Count() > 0)
+    {
+        <table id="reviewers" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Upload</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var statement in statements)
+                {
+                    <tr>
+                        <td>@statement.Id</td>
+                        <td><a target="_blank" href="@Url.Content("~/Uploads/" + statement.Upload)">@statement.Upload</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @*foreach (var statement in statements)
+        {
+            <object data="@Url.Content("~/Uploads/" + statement.Upload)" type="application/pdf" style="width:100%" >
+                <p>Alternative text - include a link <a href="myfile.pdf">to the PDF!</a></p>
+            </object>
+        }*@
+
+    }
+    else
+    {
+        <p>No statements yet.</p>
+    }
+}
+else
+{
+    <p>This section has not been filled yet.</p>
+}
+<input type="button" class="btn btn-primary" value="Previous" onclick="location.href='@Url.Action("ExternalReview", "Proposal", new { id = Model.Proposal.Id })'" />
+@if (proposal.Submitted)
+{
+    <input type="button" class="btn btn-primary" value="Next" onclick="location.href='@Url.Action("Jump", "Approval", new { id = Model.Proposal.Id })'" />
+}
+
+
+

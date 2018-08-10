@@ -1,0 +1,73 @@
+﻿@model GAPT.ViewModels.IncomeExpenditureIndexViewModel
+@using GAPT.Models
+@{
+    ViewBag.Title = "Proposed Income and Expenditure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var statements = Model.Statements;
+    //bool exists;
+    //var programmeStudy = Model.ProgrammeStudy;
+    //if (programmeStudy == null || programmeStudy.Id == 0)
+    //{
+    //    ViewBag.Title = "New Proposal";
+    //    exists = false;
+    //}
+    //else
+    //{
+    //    ViewBag.Title = "Edit Proposal";
+    //    exists = true;
+
+    //}
+    //string heading = (exists == false) ? "New Proposal" : "Edit Proposal";
+}
+
+@*<h2>@heading</h2>*@
+<h2>Section D - Proposed Income and Expenditure Statement</h2>
+@using (Html.BeginForm("DummySave", "IncomeExpenditure"))
+{
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="submit" name="jump" value="A" class="btn btn-toolbar">Section A</button>
+        <button type="submit" name="jump" value="B" class="btn btn-toolbar">Section B</button>
+        <button type="submit" name="jump" value="C" class="btn btn-toolbar">Section C</button>
+        <button type="submit" name="jump" value="D" class="btn btn-toolbar">Section D</button>
+    </div>
+    <br><br>
+    if (statements.Count() == 0)
+    {
+    <p><b>Costings for the programme will be worked out by personnel from the Department of Finance.
+Proposers will be contacted by staff from the Department of Finance to provide the necessary information.</b></p>
+    <p>This Proposal does not have any Statements yet.</p>
+   }
+   else
+   {
+    <table id="statements" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Upload</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var statement in statements)
+            {
+                <tr>
+                    <td>@statement.Id</td>
+                    <td><a target="_blank" href="@Url.Content("~/Uploads/" + statement.Upload)">@statement.Upload</a></td>
+                    <td>@Html.ActionLink("Edit", "Edit", "StatementIE", new { id = statement.Id}, null) - @Html.ActionLink("Remove", "Delete", "StatementIE", new { id = statement.Id }, null)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
+    @Html.HiddenFor(m => m.Proposal.Id)
+    <input type="button" class="btn btn-success" value="New Upload" onclick="location.href='@Url.Action("New", "StatementIE", new { id = Model.Proposal.Id})'" /><br><br>
+    <button type="submit" name="jump" value="-1" class="btn btn-primary">Previous</button>
+    <button type="submit" name="jump" value="2" class="btn btn-warning">Exit</button>
+    if (!User.IsInRole(RoleName.Apqru))
+    {
+        <input type="button" class="btn btn-success" value="Submit Proposal" onclick="location.href='@Url.Action("Submit", "Proposal", new { id = Model.Proposal.Id})'" /><br><br>
+        <p style="color:red">@Model.ErrorMessage</p>
+    }
+    
+}
+
